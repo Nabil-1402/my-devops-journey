@@ -22,24 +22,27 @@
 `>` - write to a file / stdin (this overwrites contents in a file)
 `>>` - append to a file /stdin (this does not overwrite a file)
 
-## Examples
+# Examples
 
-# Search with grep
+## Search with grep
 grep "error" /var/log/syslog
+
 grep -r "TODO" ~/projects/
 
-# Advanced grep
+## Advanced grep
 grep -i "failed" /var/log/auth.log | wc -l  # count failed login attempts
 
-# awk examples
+## awk examples
 ps aux | awk '{print $1, $11}'  # print user and command
+
 cat /etc/passwd | awk -F: '{print $1, $6}'  # print username and home dir
 
-# sed examples
+## sed examples
 sed 's/old/new/g' file.txt  # replace text
+
 sed -n '10,20p' file.txt    # print lines 10-20
 
-# Piping chains
+## Piping chains
 cat /var/log/syslog | grep "error" | awk '{print $1, $2, $3}' | sort | uniq
 
 ## What I Learned
