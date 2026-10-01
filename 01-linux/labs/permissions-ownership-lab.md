@@ -1,6 +1,6 @@
 # Labs
 
-# Lab: [Permission and Ownership]
+# Lab: Permission and Ownership
 
 ## Objective
 
@@ -8,7 +8,7 @@ Create a file that only you can read/write, but others can only read. Document t
 
 ## Commands Used
 
-touch test_file.txt
+touch test_file.txt 
 
 sudo chmod 644 test_file.txt
 
@@ -16,7 +16,7 @@ ls -l test_file.txt
 
 ## Output
 
-After running the above I got this as the output: -rw-r--r--
+After running the above I got this as the output: -rw-r--r-- 
 
 This shows that the owner (me) can read and write while the others can only read.
 
