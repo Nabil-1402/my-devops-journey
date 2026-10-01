@@ -23,24 +23,33 @@
 `tail` - Display n amount of lines from the end of a file
 
 
-## Examples
+# Examples
 
-# Navigation
+## Navigation
 cd /var/log
+
 ls -lah
+
 pwd
 
-# File operations
+## File operations
 touch test.txt
+
 mkdir -p projects/demo
+
 cp test.txt projects/demo/
+
 mv projects/demo/test.txt projects/demo/backup.txt
+
 rm projects/demo/backup.txt
 
-# Viewing files
+## Viewing files
 cat /etc/passwd
+
 less /var/log/syslog
+
 head -n 20 /etc/services
+
 tail -f /var/log/auth.log
 
 ## What I Learned
