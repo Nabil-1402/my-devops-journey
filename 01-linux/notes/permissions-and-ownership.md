@@ -19,24 +19,26 @@
 `ls -l` - List all the files/directories in long format (view permissions)
 
 
-## Examples
+# Examples
 
-# Create a script
+## Create a script
 echo '#!/bin/bash\necho "Hello DevOps"' > hello.sh
 
-# Make it executable
+## Make it executable
 chmod +x hello.sh
 
-# Run it
+## Run it
 ./hello.sh
 
 # Change ownership
 sudo chown root:root hello.sh
 
-# Understanding permissions
+## Understanding permissions
 ls -l hello.sh
-# Output: -rwxr-xr-x 1 root root 32 Nov 29 10:00 hello.sh
-# Breakdown: owner(rwx) group(r-x) others(r-x)
+
+**Output: -rwxr-xr-x 1 root root 32 Nov 29 10:00 hello.sh**
+
+**Breakdown: owner(rwx) group(r-x) others(r-x)**
 
 ## What I Learned
 
