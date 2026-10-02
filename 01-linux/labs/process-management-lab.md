@@ -1,6 +1,6 @@
 # Labs
 
-# Lab: [Process Management]
+# Lab: Process Management
 
 ## Objective
 
@@ -9,9 +9,13 @@ Start a long-running process in the background, find its PID, and kill it. Docum
 ## Commands Used
 
 sleep 90000 &
+
 jobs
+
 pgrep sleep
+
 kill 33058
+
 jobs
 
 ## Output

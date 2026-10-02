@@ -19,24 +19,30 @@
 `jobs` - Lists all the current running jobs
 
 
-## Examples
+# Examples
 
-# View processes
+## View processes
 ps aux
+
 ps aux | grep nginx
 
-# Real-time monitoring
+## Real-time monitoring
 top
+
 htop  # install via: sudo apt install htop
 
-# Background processes
+## Background processes
 sleep 100 &
+
 jobs
+
 fg %1  # bring to foreground
+
 bg %1  # send to background
 
-# Kill processes
+## Kill processes
 kill <PID>
+
 killall sleep
 
 ## What I Learned
