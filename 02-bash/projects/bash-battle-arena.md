@@ -192,6 +192,128 @@ fi
 This asks the user to enter the name of a directory that they want to see sorted. Then if the directory exists I run `ls -lSh "$dir_name" | awk 'NR > 1 {print $9, $5}'` to list out the contents and order them by size and printing out the name of the file with its size. If the directory does not exist then an appropriate message is displayed.
 
 
+## Level 8: Multi-File Searcher
+
+### Mission:
+
+Create a script that searches for a specific word or phrase across all .log files in a directory and outputs the names of the files that contain the word or phrase.
+
+## Solution:
+
+#!/bin/bash
+
+echo "Enter a directory to search: "
+read dir
+
+if [ ! -d "$dir" ]; then
+	echo "Directory $dir does not exist"
+    exit 1
+fi
+
+echo "Enter word or phrase you want to find from $dir: "
+read string
+
+for file in "$dir"/*.log; do
+    if [ -f "$file" ]; then
+        search=$(grep "$string" < "$file"  2>/dev/null)
+        if [ "$?" -eq 0 ]; then
+            echo "$file"
+        else
+            continue
+        fi
+    else
+        continue
+    fi
+done
+
+## Explanation:
+
+This asks the user to enter the name of a directory they want to search. Then checks if the directory exists, if it does not then program is stopped. If it does then it asks the user to enter the name of a word/phrase they are searching for. Then all the files ending with .log inside the directory are itterated over and the word/phrase is searched for. If it is found then the file is printed out to the user.
+
+## Level 9: Script to Monitor Directory Changes
+
+### Mission:
+
+Write a script that monitors a directory for any changes (file creation, modification, or deletion) and logs the changes with a timestamp.
+
+## Solution:
+
+#!/bin/bash
+
+DIRECTORY="Arena"
+LOG_FILE="change_log.txt"
+
+if [ ! -d "$DIRECTORY" ]; then
+    echo "Directory does not exist."
+    exit 1
+fi
+
+fswatch -r "$DIRECTORY" | while read event; do
+    if [ -e "$event" ]; then
+        echo "$(date +'%Y-%m-%d %H:%M:%S') File modified/created: $event" >> "$LOG_FILE"
+    else
+        echo "$(date +'%Y-%m-%d %H:%M:%S') File deleted: $event" >> "$LOG_FILE"
+    fi
+done
+
+
+
+## Explanation:
+
+This script checks if the directory Arena exists. Then the `fswatch` command is used with the `-r` to watch for any modifications made to the directory and any subdirectories. Then whule this is running, any changes noticed are read and stored in the event variable. If the event exists then the event and the timestap are appended to a log file.
+
+## Level 10: Boss Battle 2 - Intermediate Scripting
+
+### Mission:
+
+Write a script that:
+
+1. Creates a directory called Arena_Boss.
+2. Creates 5 text files inside the directory, named file1.txt to file5.txt.
+3. Generates a random number of lines (between 10 and 20) in each file.
+4. Sorts these files by their size and displays the list.
+5. Checks if any of the files contain the word 'Victory', and if found, moves the file to a directory called Victory_Archive.
+
+## Solution:
+
+#!/bin/bash
+
+mkdir -p Arena_Boss
+
+for num in {1..5}; do
+        lines=$((RANDOM % 11 + 10))
+        file="Arena_Boss/file$num.txt"
+
+        > "$file"
+
+        for ((i=1; i<=lines; i++)); do
+                echo "This is line: $i" >> "$file"
+        done
+done
+
+sorted=$(ls -lSh Arena_Boss/ | awk 'NR > 1 {print $9, $5}')
+echo "$sorted"
+
+echo "Victory" >> Arena_Boss/file3.txt
+
+mkdir -p Victory_Archive
+
+for file in Arena_Boss/*.txt; do
+    if grep -q "Victory" "$file"; then
+        mv "$file" Victory_Archive/
+        echo "$file contains 'Victory' and has been moved to Victory_Archive."
+    fi
+done
+
+
+
+## Explanation:
+
+This script creates the Arena_Boss directory then runs a for loop to quickly create 5 .txt files and also during this creates a variable called lines which stores the number of lines (randomly generated between 10-20) to be in each file. Then the files are sorted by their size and printed out. then just to test that it works, "Victory" is added to a file and then a new archive is made and all files within Arena_Boss are searched to find the word "Victory". If it is found then the file containing it is moved to Victory_Archive directory.
+
+
+
+
 
 
 
