@@ -312,6 +312,133 @@ done
 This script creates the Arena_Boss directory then runs a for loop to quickly create 5 .txt files and also during this creates a variable called lines which stores the number of lines (randomly generated between 10-20) to be in each file. Then the files are sorted by their size and printed out. then just to test that it works, "Victory" is added to a file and then a new archive is made and all files within Arena_Boss are searched to find the word "Victory". If it is found then the file containing it is moved to Victory_Archive directory.
 
 
+## Level 11: Automated Disk Space Report
+
+### Mission:
+
+Create a script that checks the disk space usage of a specified directory and sends an alert if the usage exceeds a given threshold.
+
+## Solution:
+
+#!/bin/bash
+
+DIRECTORY="Arena"
+THRESHOLD=1
+
+USAGE=$(du -sm "$DIRECTORY" | awk '{print $1}')
+
+if [ "$USAGE" -gt "$THRESHOLD" ]; then
+    echo "Warning: Disk usage for $DIRECTORY is at $USAGE%!"
+else
+    echo "Disk usage for $DIRECTORY is at $USAGE%. All is well."
+fi
+
+
+
+## Explanation:
+
+This script checks the disk usage in megabytes. In this script threshold is in megabytes and if the usage is greater than the threshold then a warning error is printed out.
+
+## Level 12: Simple Configuration File Parser
+
+### Mission:
+
+Write a script that reads a configuration file in the format KEY=VALUE and prints each key-value pair.
+
+## Solution:
+
+#!/bin/bash
+
+FILE="settings.conf"
+
+if [ -f "$FILE" ];
+        echo "File does not exist"
+        exit 1
+
+while IFS='=' read -r key value; do
+        echo "Key: $key, Value:v$value"
+done < "$FILE"
+
+## Explanation:
+
+This script checks that the config file exists. If it does then it goes through each line in the file and uses "=" as the deliminator and reads the two values between the "=" and stores the first as key and second as value. Then it prints out the key value pair. This is done using a while loop.
+
+## Level 15: Boss Battle 3 - Advanced Scripting
+
+### Mission:
+
+Combine the skills you've gained! Write a script that:
+
+1. Presents a menu to the user with the following options:
+
+- Check disk space
+- Show system uptime
+- Backup the Arena directory and keep the last 3 backups
+- Parse a configuration file settings.conf and display the values
+
+2. Execute the chosen task.
+
+## Solution:
+
+echo "____Menu____"
+echo "1. Check disk space"
+echo "2. Show system uptime"
+echo "3. Backup the Arena directory and keep the last 3 backups"
+echo "4. Parse a configuration file settings.conf and display the values"
+
+echo "Enter your choice [1 to 4]: "
+read choice
+
+case "$choice" in
+        1)
+                disk=$(df -h)
+                echo "Disk space is: $disk"
+                ;;
+
+        2) 
+                up=$(uptime)
+                echo "Uptime is: $up"
+
+        3)      
+                SOURCE_DIR="Arena"
+                BACKUP_DIR="Backups"
+
+                mkdir -p "$BACKUP_DIR"
+
+                TIMESTAMP=$(date +"%Y-%m-%d_%H-%M-%S")
+                BACKUP_NAME="backup_$TIMESTAMP.tar.gz"
+                tar -czf "$BACKUP_DIR/$BACKUP_NAME" "$SOURCE_DIR"
+                echo "Created backup: $BACKUP_NAME"
+
+                cd "$BACKUP_DIR" || exit
+                ls -t | sed -e '1,5d' | while IFS= read -r file; do
+                        rm -f "$file"
+                done
+                ;;
+        4)
+                CONFIG_FILE="settings.conf"
+                if [ ! -f "$CONFIG_FILE" ]; then
+                        echo "Configuration file does not exist."
+                        exit 1
+                fi
+
+                while IFS='=' read -r key value; do
+                        echo "Key: $key, Value: $value"
+                done < "$CONFIG_FILE"
+                ;;
+        *)
+                echo "Invalid option"
+                ;;
+esac
+
+
+## Explanation:
+
+This script presents the user with a menu and reads their input. I used a switch case block here to handle incorrect data being passed in more easily. If 1 is entered then disk space is shown. If 2 is entered then system uptime is shown. If 3 is entered then a backup directory is created and stores the backup files ordered by modification time, and removes the first 5 lines from the output, which are the most recent files. If 4 is selected then key value pairs are read and printed out from a .conf file. If anything other than these 4 options is entered then an error message is printed.
+
+
+
+
 
 
 
