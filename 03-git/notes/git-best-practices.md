@@ -10,13 +10,6 @@
 - Git at scale
 - Git security and secrets hygine
 
-## Commands
-
-No commands to note
-
-## Examples
-
-No examples to note
 
 ## What I Learned
 
