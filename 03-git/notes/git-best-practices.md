@@ -12,15 +12,15 @@
 
 ## Commands
 
-`command` - what it does
+No commands to note
 
 ## Examples
 
-(code examples)
+No examples to note
 
 ## What I Learned
 
-
+I learned what good commit hygine is and the benefits of having it especially in a team setting. I also learned the usefulness of using pre-commit and automation tools such as using linters to make your commits better and easily pass CI pipelines on merges. I also learned how crucial it is not to commit secrets and how to protect against accidentally doing so.
 
 ## Your Notes
 
