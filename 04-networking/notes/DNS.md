@@ -30,6 +30,7 @@ nslookup google.com
 
 ## What I Learned
 
+I learned what a DNS is and how its hierachy is structured. I also learned why having a DNS is useful and how DNS queries are ran and the order in which it takes for a website to be found and loaded by a client. I also learnt some commands that will help me find the exact IP addresses for a domain and also the use of the /etc/hosts file and how to edit it to make looking for domains faster.
 
 ## Your Notes
 
