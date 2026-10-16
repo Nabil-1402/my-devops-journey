@@ -4,85 +4,107 @@
 
 ## Key Concepts
 
-- Git is a version control tool used to help developers
-- Git is a distributed system
-- Git is not a file tracker
+- Git is a version control tool for managing changes and collaboration.
+- Git is distributed: each full clone has its own repository history.
+- Git records snapshots of tracked content, rather than just a list of file changes.
 
-## Git Terminology and commands
+## Git Terminology
 
-`Repository` - A Git project containing your files and a `.git` directory that stores version history and metadata.
+| Term | Meaning |
+| :--- | :--- |
+| **Repository** | A Git project containing your files and a `.git` directory that stores history and metadata. |
+| **Commit** | A snapshot of tracked content, with metadata such as the author, timestamp, message and parent commit(s). |
+| **Branch** | A movable pointer to a commit, such as `main`, `dev` or `feature/login`. |
+| **Remote** | A named connection to another repository, often hosted on GitHub or GitLab. A common name is `origin`. |
+| **Staging Area / Index** | Holds the changes selected for the next commit. |
+| **Blob** | Stores file contents without the filename or path. |
+| **Tree** | Represents a directory snapshot, storing names, file modes and references to blobs or other trees. |
+| **Refs — References** | Names pointing to Git objects, including branches and tags. |
+| **HEAD** | Identifies the current branch, or points directly to a commit in detached HEAD state. |
+| **Object Store** | Stores Git objects, including blobs, trees, commits and annotated tags, identified by hashes. |
+| **Tag** | A named reference marking a point in history, often a release such as `v1.0`. |
 
-`Commit` - A snapshot of your tracked files, with metadata such as the author, timestamp, message, and parent commit(s).
+## Common Commands
 
-`Branch` - A movable pointer to a commit, such as `main`, `dev`, or `feature/login`.
-
-`Remote` - A named reference to another repository, often hosted on GitHub or GitLab. The default name is usually `origin`.
-
-`Staging Area` - Also called the index. Holds the changes you have selected to include in your next commit.
-
-`Blob` - Stores the contents of a file, without its filename or path.
-
-`Tree` - Represents a directory snapshot, storing entry names, file modes, and pointers to blobs (files) or other trees (subdirectories).
-
-`Refs (References)` - Names that point to Git objects, including branches under `refs/heads/` and tags under `refs/tags/`.
-
-`HEAD` - Points to your current branch, or directly to a commit when in detached HEAD state.
-
-`Index` - Usually the binary file `.git/index`, which stores staging area information.
-
-`Object Store` - Located in `.git/objects/`. Stores blobs, trees, commits, and annotated tags, identified by their hashes.
-
-`Tag` - A named reference marking a particular point in history, often a release such as `v1.0`.
-
-`git init` - Initialises a Git repository, creating a `.git` directory.
-
-`git add` - Stages changes for the next commit.
-
-`git commit` - Saves the staged changes as a snapshot in the repository's history.
-
-`git status` - Shows staged changes, unstaged changes, and untracked files.
-
-`git log` - Shows the commit history.
-
-`git diff` - Shows unstaged changes. Use `git diff --staged` to see staged changes.
-
-`git config` - Configures Git settings, such as your author name and email address.
-
-`git help <command>` - Opens the built-in documentation for a Git command.
-
-`git clone` - Creates a local copy of an existing repository.
-
-`git rm` - Removes tracked files and stages their deletion.
-
-`git mv` - Moves or renames tracked files and stages the change.
-
-`git restore` - Restores files, discarding unstaged changes by default. Use `git restore --staged` to unstage changes.
+| Command | Purpose |
+| :--- | :--- |
+| `git init` | Initialises a Git repository. |
+| `git clone <url>` | Creates a local copy of an existing repository. |
+| `git add <file>` | Stages changes for the next commit. |
+| `git commit -m "message"` | Records the staged snapshot in the repository's history. |
+| `git status` | Shows staged changes, unstaged changes and untracked files. |
+| `git log` | Displays commit history. |
+| `git diff` | Shows unstaged changes to tracked files. |
+| `git diff --staged` | Compares staged changes with the latest commit. |
+| `git config` | Reads or updates Git settings, such as author name and email. |
+| `git help <command>` | Opens documentation for a Git command. |
+| `git rm <file>` | Removes a tracked file and stages its deletion. |
+| `git mv <old> <new>` | Moves or renames a tracked file and stages the change. |
+| `git restore <file>` | Restores a file from the index, discarding its unstaged changes. |
+| `git restore --staged <file>` | Unstages changes while keeping the working files. |
+| `git push` | Sends local commits and updates references in a remote repository. |
 
 ## Examples
 
+```bash
+# Check the current state
+git status
+
+# Stage a file
 git add <file_name>
 
-git commit -m "commit message"
+# Commit the staged changes
+git commit -m "Describe the change"
 
-git push 
+# Push commits to the configured upstream
+git push
 
+# Create and switch to a new branch
 git checkout -b new-branch
+```
 
 ## What I Learned
 
-I Learned that Git is a powerful version control tool that helps people manage their work especially in team settings. Git provides visibility and accountability. Having a place to be able to see your history makes reverting changes much easier and same with collaborative work. Unlike old tools like SVN there's no file locking in git. There is a central remote repo and all team members can have their own local repo to work on and push changes from their local to the remote.
+I learned how Git helps developers manage changes, collaborate and maintain visibility into a project's history.
+
+Its history makes it easier to investigate changes and revert work when needed. Git supports parallel development without requiring file locking in its normal workflow.
+
+Because Git is distributed, team members can work and commit locally, then share changes through a remote repository. A shared central remote is a common workflow, but Git does not require one.
 
 ## Your Notes
 
-Every git repo has a secret folder called `.git`. This directory is the "brain" of your git project/directory. This holds everything git needs to function: history, configurations, branches, etc. `.git/ref` this is where git stores branches and tags. `.git/objects`, this is also called object store and it is where git keeps every commit, blob and tree. This is all compressed and stored by SHA hash. `.git/config` stores all the repo configuration settings, such as having different remotes or users for a project, it will go here. `.git/HEAD` is a key file and tells git what branch your commit is currently on. `.git/index` is the staging area, that is like a temporary zone between editing your files and committing them.   
+### The `.git` Directory
 
-Typical git workflow:
- - working directory -> git status -> git add (staging area) -> git commit -> git push (remote repo)
+Each standard Git repository has a hidden `.git` directory containing the information Git needs to manage the project.
 
+| Path | Purpose |
+| :--- | :--- |
+| `.git/refs/` | Stores references such as branches and tags. Some references may also be packed. |
+| `.git/objects/` | Stores compressed Git objects, identified by their hashes. |
+| `.git/config` | Stores repository-specific settings, including remotes and local configuration. |
+| `.git/HEAD` | Identifies the current branch or a directly checked-out commit. |
+| `.git/index` | Stores staging area information for the next commit. |
 
-Being able to look at the Git history is crucial especially for a DevOps engineer. The following are useful commands for helping you do that: git log, git log --online --graph (shows a clean visual branch layout), git show <commit> (view a specific commit), git diff, git diff --staged (compare staged to last commit), git blame <file> (show who last changed each line) and git reflog (view local HEAD history). 
+### Typical Git Workflow
 
-Git gives you visibility and accountabilty.
+1. Edit files in the **working directory**.
+2. Run `git status` to inspect changes.
+3. Use `git add` to select changes for the **staging area**.
+4. Use `git commit` to record the staged snapshot **locally**.
+5. Use `git push` to share commits with the **remote repository**.
 
+### Inspecting Git History
 
+Understanding Git history is useful for troubleshooting, reviewing changes and tracing issues in DevOps work.
 
+| Command | Purpose |
+| :--- | :--- |
+| `git log` | Displays commit history. |
+| `git log --oneline --graph` | Shows a compact history with a visual commit graph. |
+| `git show <commit>` | Displays a specific commit and its changes. |
+| `git diff` | Shows unstaged changes to tracked files. |
+| `git diff --staged` | Shows staged changes compared with the latest commit. |
+| `git blame <file>` | Shows the commit and author responsible for the last change to each line. |
+| `git reflog` | Shows locally recorded reference movements, including recent HEAD changes. |
+
+Git provides **visibility, traceability and accountability** throughout a project's development.
