@@ -2,56 +2,56 @@
 
 # Error Handling and Exit Codes
 
+# 🛠️ Error Handling and Exit Codes
+
 ## Key Concepts
 
-- Error handling is useful in preventing errors crashing a script or resulting in unexpected errors
-- You should use `set` commands to help with error handling and debugging
+- Error handling helps scripts respond predictably when something goes wrong.
+- Exit codes indicate whether commands succeeded.
+- `set` options support error detection and debugging.
 
 ## Commands
 
-`exit 0` - Exit code with success
-
-`exit 1` - Exit code with error
-
-`echo $?` - Print out the exit code of the last command ran
-
-`command` - checks if a command exists in a system
-
-`set -e` - Stop the script when any command returns a non zero exit code
-
-`set -u` - Stop the script when you come across any uninitialised variable
-
-`set -x` - Print all the executed commands to the terminal before it is actually executed (useful for debugging)
-
-`set +x` - To not print out anything after a certain point for debugging
-
-`set -o nounset` - equivalent to set -u, helps you catch uninitialised variables 
-
-`set -o errexit` - Works the same was as set -e, causes shell to exit if any invoked command fails
-
-`set -o pipefail` - Useful setting that causes the pipline to return the exit status of the last command in the pipeline that exited with a non zero status
+| Command | Purpose |
+| :--- | :--- |
+| `exit 0` | Exits the script successfully. |
+| `exit 1` | Exits the script with a general failure status. |
+| `echo "$?"` | Prints the exit status of the previous command. |
+| `command -v <command>` | Checks whether a command can be found. |
+| `set -e` | Exits on an unhandled command failure, subject to Bash's exceptions. |
+| `set -u` | Treats expansion of unset variables as an error. |
+| `set -x` | Prints expanded commands to standard error before executing them. |
+| `set +x` | Disables command tracing. |
+| `set -o nounset` | Equivalent to `set -u`. |
+| `set -o errexit` | Equivalent to `set -e`. |
+| `set -o pipefail` | Makes a pipeline return the rightmost non-zero status, or zero if all commands succeed. |
+| `set -eux` | Enables `-e`, `-u` and `-x` together. |
 
 ## Examples
 
+### Handling Division by Zero
+
+```bash
 #!/bin/bash
 
 num1=10
-
 num2=0
 
-if [$num2 -eq 0]; then
-
-    echo "Error: Division by zero is not allowed"
-
+if [ "$num2" -eq 0 ]; then
+    echo "Error: Division by zero is not allowed." >&2
     exit 1
-
 fi
 
-result=$(($num1 / num2))
+result=$((num1 / num2))
 
 echo "The result is: $result"
+```
 
+> `>&2` sends the error message to standard error.
 
+### Enabling Error Checks and Debugging
+
+```bash
 #!/bin/bash
 
 set -eux
@@ -59,26 +59,81 @@ set -eux
 echo "This is a test."
 
 x=10
-
-echo "This value of x is: $x"
+echo "The value of x is: $x"
 
 nonexistentcommand
 
+# This line is not reached because the previous command fails.
+echo "Script complete."
+```
+
 ## What I Learned
 
-I learned that error handling is very useful tool to use when writing your scripts. This is done with if statements to catch the errors. Also I learned how to make scripts more robust and helpful with debugging by learning about `set` commands.
+I learned how to use conditionals and exit codes to handle failures and provide helpful error messages.
 
+I also learned how Bash's `set` options can detect problems earlier and show which commands are being executed when debugging.
 
 ## Your Notes
 
-Error handling is about foreseeing where things can go wrong and dealing with these issues. This can make scripts more reliable and trustworthy. An error causes a script to just stop and this can be a problem when the script is large. For error handling you use if statements and an exit code of 1. This can give the user helpful error messages.
+### Error Handling
 
-Whenever a command or script ends it returns an exit code to the system. This is a numerical value which represents whether a command or script ended successfully or not. `0` represents success and non zero represents there was an error. 
+**Error handling** means anticipating possible failures and deciding how the script should respond.
 
-When we include `set -e` the script will stop executing when any command returns a non zero exit code. This command can help us spot errors as soon as they come and avoid unexpected behaviour. However not all non zero exit codes are indicative of errors that should stop your script.
+A failed command does not normally stop a Bash script automatically. Without appropriate checks, the script may continue and produce unexpected results.
 
-When we include the `set -u` we force the bash script to stop executing when we come across a non initialised variables. This is helps you prevent scenarios where missing data could lead incorrect results or unexpected behavior. 
+Use conditionals to detect problems, explain what happened and exit with a suitable status when necessary.
 
-When a script is not behaving as expected, debugging comes in handy. One powerful tool for this is the `set -x` command. This prints each command that will be executed to the terminal before it is executed. You can treat this with `set +x` as breakpoints in your script for debugging. 
+### Exit Codes
 
-You can combine all of them with the command `set -eux`. 
+Commands and scripts return an **exit status** when they finish.
+
+- **`0`:** Success.
+- **Non-zero:** Failure or another command-specific outcome.
+
+Use `echo "$?"` immediately after a command to inspect its status.
+
+> A non-zero status is not always an unexpected error. For example, `grep` returns `1` when it finds no matches.
+
+### Stopping on Failures with `set -e`
+
+`set -e` can stop a script when an unhandled command fails, helping prevent later commands from running with incorrect assumptions.
+
+However, it has exceptions, including commands tested in `if` conditions and many uses of `&&` or `||`.
+
+It supports explicit error handling rather than replacing it.
+
+### Detecting Unset Variables with `set -u`
+
+`set -u` treats attempts to expand unset variables as errors and normally exits a non-interactive script.
+
+This helps catch spelling mistakes and missing values.
+
+> An unset variable is different from a variable deliberately assigned an empty value.
+
+### Debugging with `set -x`
+
+`set -x` enables command tracing, showing expanded commands before execution.
+
+Use `set +x` to turn tracing off. These commands mark the start and end of tracing; they do not pause execution like breakpoints.
+
+> Tracing can expose passwords, tokens and other sensitive values. Avoid tracing commands that handle secrets.
+
+### Checking Pipelines with `pipefail`
+
+Normally, a pipeline returns the exit status of its final command.
+
+With `set -o pipefail`, it returns the status of the **rightmost failed command**, making earlier failures easier to detect.
+
+### Combining Options
+
+Use the following to enable failure checks, unset-variable checks and tracing together:
+
+```bash
+set -eux
+```
+
+To also check for failures earlier in pipelines:
+
+```bash
+set -euxo pipefail
+```

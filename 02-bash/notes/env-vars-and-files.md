@@ -2,98 +2,155 @@
 
 # Environment Variables and File Handling
 
+# 📂 Environment Variables and File Handling
+
 ## Key Concepts
 
-- What are environment variables and the standard ones
-- How to read a file and lines in a file
-- How to write to a file
-- What a file checksum is and how to compare two file's checksum
+- Environment variables and common examples
+- Reading files line by line
+- Writing and appending to files
+- Generating and comparing file checksums
 
-## Commands
+## Variables and Commands
 
-`$LOGNAME` - Standard env variable which represents the login name of the current user
+### Common Variables
 
-`$SHELL` - Standard env variable which stores the path of the current user's shell
+| Variable | Purpose |
+| :--- | :--- |
+| `$HOME` | The current user's home directory. |
+| `$USER` | The current user's username in typical shell environments. |
+| `$LOGNAME` | The user's login name. |
+| `$SHELL` | The user's configured login shell, not necessarily the shell currently running. |
+| `$PWD` | The current working directory. |
+| `$PATH` | A colon-separated list of directories searched for executable commands. |
+| `$LANG` | The default locale, including language and character encoding settings. |
+| `$OSTYPE` | A Bash variable describing the operating system. |
 
-`$PWD` - Standard env variable which represents the current working directory
+### File Handling
 
-`$PATH` - Standard env variable which prints out the different types of executable search paths and where the binaries are located
+| Command / Operator | Purpose |
+| :--- | :--- |
+| `read -r line` | Reads a line into a variable without interpreting backslash escapes. |
+| `cat <file>` | Prints a file's contents. |
+| `<` | Redirects a file into a command's standard input. |
+| `>` | Redirects output to a file, creating it or overwriting its contents. |
+| `>>` | Appends output to a file, creating it if needed. |
+| `md5sum <file>` | Generates an MD5 checksum. |
+| `sha256sum <file>` | Generates a SHA-256 checksum. |
 
-`$LANG` - Standard env variable which represents the default language settings
-
-`read` - Read lines from a file
-
-`md5sum` - used to generate a file checksum
-
-`sha256sum` - used to generate a sha256 checksum
+> On macOS, use `shasum -a 256 <file>` for SHA-256 or `md5 <file>` for MD5.
 
 ## Examples
 
+### Accessing Variables
+
+```bash
 #!/bin/bash
 
 my_home="$HOME"
-
 my_user="$USER"
-
 my_os="$OSTYPE"
 
-echo "Home Director: $my_home"
-
+echo "Home directory: $my_home"
 echo "Current user: $my_user"
+echo "OS type: $my_os"
+```
 
-echo "OS Type: $my_os"
+### Reading a File Line by Line
 
-
+```bash
 #!/bin/bash
 
-read_file(){
+read_file() {
+    local file_path="$1"
+    local line
 
-    local file_path=$1
-
-    while IFS= read -r line; do
-
-        echo "$line"
-
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        printf '%s\n' "$line"
     done < "$file_path"
-
 }
 
 read_file "./log.txt"
+```
 
+- **`IFS=`** preserves leading and trailing whitespace.
+- **`-r`** preserves backslashes.
+- **`|| [[ -n "$line" ]]`** handles a final line without a trailing newline.
+
+### Writing to a File
+
+```bash
+# Create or overwrite a file
+printf '%s\n' "First entry" > log.txt
+
+# Append another line
+printf '%s\n' "Another entry" >> log.txt
+```
+
+### Comparing Checksums
+
+```bash
 #!/bin/bash
 
-compare_checksums(){
-
+compare_checksums() {
     local checksum1="$1"
-
     local checksum2="$2"
 
     if [[ "$checksum1" == "$checksum2" ]]; then
-
-        echo "checksums match. File hask kept integrity"
-
+        echo "Checksums match."
     else
-
-        echo "checksums do not match. File compromised"
-
+        echo "Checksums differ. The file contents may have changed."
     fi
-
 }
 
 compare_checksums "123" "123"
+```
+
+> This example compares supplied strings. Use a checksum command to calculate actual file hashes first.
 
 ## What I Learned
 
-I learned what environment variables are, their naming convention and the standard environment variables. I also learned about file handling operators such as reading a file and writing to a file. Additionally I learned what a file checksum is and what it is used for.
+I learned how environment variables provide information about the system and user, and how to reference them in Bash scripts.
+
+I also learned how to read files, write and append content, and compare checksums to check file integrity.
 
 ## Your Notes
 
-Environment variables are notated with fully upper case characters. Environment variables can also be assigned to local variables making it easier to reference them later. 
+### Environment Variables
 
-Standard environment variables give us insights into various aspects of the system, user and runtime environment. They provide information that can help us create more robust and adaptable bash scripts. 
+**Environment variables** pass configuration and information to processes.
 
-Reading files is an important task in scripting, it allows us to access and extract valuable information from various types of files. You use the `read` command to read each line in the file. You can also use the `cat` command to read files.
+Their names conventionally use **UPPERCASE**, although this is not required. Shell variables can store their values for later use.
 
-Writing files allow us to create, modify and store information in various formats. You can use the `>` or `>>` symbol to store the contents from one parameter to another. 
+Use `export` when a variable needs to be available to child processes:
 
-File checksums are cryptographic hashes that provide a unique fingerprint for a file which allows us to verify the authenticity of the file. Every file has a file checksum that is different from another file. Another commonly used algorithm for file checksums is SHA256. Checksums are especially useful when we need to compare the integrity of a file over time or across different systems. So we can use it to compare two different checksums and see if their values match. 
+```bash
+export APP_ENV="development"
+```
+
+### Reading Files
+
+Reading files lets scripts access and process stored information.
+
+- Use **`read`** in a loop to process a file line by line.
+- Use **`cat`** to print a file's contents.
+
+### Writing Files
+
+Output redirection lets scripts create files and store information.
+
+- **`>`** creates or overwrites a file.
+- **`>>`** appends to a file.
+
+### File Checksums
+
+A **checksum** is a value calculated from a file's contents. Cryptographic hashes such as **SHA-256** act as fingerprints for detecting changes.
+
+- Identical file contents produce identical hashes with the same algorithm.
+- Different contents are overwhelmingly likely to produce different SHA-256 hashes.
+- A mismatch indicates different content, not necessarily malicious activity.
+- A match supports integrity verification when compared against a trusted expected hash.
+
+Checksums are useful for comparing files across systems or checking whether a file has changed over time.
+
+> A checksum alone does not prove authenticity. SHA-256 is preferred over MD5 for security-sensitive integrity checks.

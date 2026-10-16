@@ -4,91 +4,153 @@
 
 ## Key Concepts
 
-- Functions blocks of code that can be repeatedly called upon
-- Functions return a value and can take in parameters
+- Functions organise reusable blocks of code.
+- Functions accept arguments and return an exit status.
+- User input makes scripts interactive.
+- Pipes connect the output of one command to another.
 
-## Commands
+## Syntax and Parameters
 
-`function_name(){.....}` - Function syntax
-`function_name p1 p2` - Call a function with parameters
-`local varaiable_name=` - Create a local variable
-`$#` - special variable that holds the count of arguments
-`$0` - variable containing the name of the script
-`read` - capture the users input and store it
+| Syntax / Parameter | Purpose |
+| :--- | :--- |
+| `function_name() { ...; }` | Defines a function. |
+| `function_name p1 p2` | Calls a function with arguments. |
+| `local variable_name="value"` | Creates a local variable inside a function. |
+| `$1`, `$2` | Access the first and second positional arguments. |
+| `$#` | Holds the number of positional arguments. |
+| `$0` | Usually contains the script's invocation name; it does not become the function name. |
+| `read -r name` | Reads user input into a variable without interpreting backslash escapes. |
+| `return 1` | Ends a function with a failure status. |
+| `command1 \| command2` | Passes the first command's standard output to the second command's standard input. |
 
 ## Examples
 
+### Defining and Calling a Function
+
+```bash
 #!/bin/bash
 
-hello_world(){
-
-    echo "Hellow World"
-
+hello_world() {
+    echo "Hello World"
 }
 
+hello_world
+```
+
+### Reading User Input
+
+```bash
 #!/bin/bash
 
-greet_user(){
-
-    echo "What is your name?"
-
-    read name
-
-    echo "Hello, $name!"
-
-}
-
-#!/bin/bash
-
-greet(){
-
+greet_user() {
     local name
 
-    if [ $# -eq 0]; then
+    echo "What is your name?"
+    read -r name
 
-        echo "What is your name?"
-
-        read name
-    
-    else
-
-        name=$1
-
-    fi
-
-    echo "Hello name!"
-
+    echo "Hello, $name!"
 }
 
+greet_user
+```
+
+### Using Arguments or User Input
+
+```bash
 #!/bin/bash
 
-get_file_count(){
+greet() {
+    local name
 
-    local directory=$1
-    
+    if [ "$#" -eq 0 ]; then
+        echo "What is your name?"
+        read -r name
+    else
+        name="$1"
+    fi
+
+    if [[ -z "$name" ]]; then
+        echo "Error: Name cannot be empty." >&2
+        return 1
+    fi
+
+    echo "Hello, $name!"
+}
+
+greet "Nabil"
+```
+
+### Counting Files with a Pipe
+
+```bash
+#!/bin/bash
+
+get_file_count() {
+    local directory="${1:-.}"
     local file_count
 
-    file_count=$(ls "$directory" | wc -l)
+    if [[ ! -d "$directory" ]]; then
+        echo "Error: Directory does not exist." >&2
+        return 1
+    fi
 
-    echo "Number of files in $director: $file_count
+    file_count=$(
+        find "$directory" -maxdepth 1 -type f -exec printf 'x\n' \; |
+            wc -l
+    )
 
+    echo "Number of files in $directory: $file_count"
 }
 
 get_file_count "./"
+```
+
+This counts regular files directly inside the directory, including hidden files, without counting subdirectories.
 
 ## What I Learned
 
-Functions are useful to organise and modularising your script. You can pass in parameters to your functions and even use user input as parameters. You should use conditional statements to filter out bad data that is entered and you can make scripts more powerful using piping.
+I learned how functions organise scripts into reusable sections and accept arguments or user input.
 
+I also learned how to validate input using conditionals, return a failure status when necessary, and use pipes to combine commands.
 
 ## Your Notes
 
-Functions allow us to modularise and organise our scripts. Functions can use local variables. You can call a variable by typing out its name along with any parameters. 
+### Functions
 
-There are two types of parameters, positional and special parameters. Positional parameters allow us to pass in data to functions and allow us to access them using numbered variable such as $1 and $2. Special parameters provide additional information about the script such as the full name of the script and the number of arguments.
+**Functions** group related commands into reusable blocks, helping keep scripts organised and easier to maintain.
 
-User inputs allow our scripts to interact with users and make the script dynamic and responsive. You use the read followed by a variable to store what the user types from the CLI.
+Call a function by writing its name followed by any arguments. Use **local variables** to keep function-specific values separate from the rest of the script.
 
-Bad data refers to invalid or unexpected user inputs that may cause errors or undesired behaviour in our scripts. You can use conditional statements to validate user inputs. When an error condition is met type `return 1` to return a non zero exit code. Input sanitization can be used to clean input data.
+> In Bash, `return` supplies a numeric exit status, not a general data value. Functions commonly output data using `printf` or `echo`, which callers can capture with `$(...)`.
 
-Piping allows us to pass the output of one command as the input to another. 
+### Positional and Special Parameters
+
+- **Positional parameters**, such as `$1` and `$2`, access arguments passed to a script or function.
+- **Special parameters**, such as `$#`, provide information about the current execution context.
+- Inside a function, `$#` counts that function's arguments, while `$0` still refers to the script or shell.
+
+### User Input
+
+The **`read`** command stores input entered through the terminal in a variable.
+
+This allows scripts to respond to users rather than relying only on fixed values.
+
+### Input Validation
+
+Invalid or unexpected input can cause errors or unwanted behaviour.
+
+Use conditionals to check input before using it. If a function cannot continue, provide a helpful message and use `return 1`.
+
+**Validation** checks whether input is acceptable. **Sanitisation** transforms or cleans input when appropriate.
+
+### Piping
+
+A **pipe**, written as `|`, passes one command's standard output into another command's standard input.
+
+For example:
+
+```bash
+printf '%s\n' "apple" "banana" "orange" | wc -l
+```
+
+Here, `printf` produces three lines and `wc -l` counts them.
