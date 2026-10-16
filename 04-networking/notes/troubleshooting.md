@@ -5,55 +5,86 @@
 
 ## Key Concepts
 
-- Common Network Issues
-- Identifying Symptons
+- Common network issues
+- Identifying symptoms
+- Troubleshooting an unreachable website
 
 ## Commands
 
-`ping <ip address/name>` - Sends an ICMP request to the IP you want to reach, used to test if something is reachable
+| Command | Purpose |
+| :--- | :--- |
+| `ping <IP_or_domain>` | Sends ICMP Echo Requests to test reachability and measure round-trip time. |
+| `traceroute <domain>` | Shows responding routers along the path towards a destination. |
+| `nslookup <domain>` | Queries DNS to check name resolution. |
+| `dig <domain>` | Displays detailed DNS query results. |
 
-`traceroute <name>` - Tracks the path of your data takes to reach a certain destination
-
-`nslookup <name>` - Query DNS
+> A failed `ping` does not always mean a device is unreachable: ICMP may be blocked. Similarly, missing replies in `traceroute` do not necessarily indicate a broken connection.
 
 ## Examples
 
+```bash
 ping google.com
-
 traceroute google.com
-
 nslookup google.com
+dig google.com
+```
 
 ## What I Learned
 
-I learned why we need to do network troubleshooting as well as the common network issues. Additionally I learned what symptons could potentially be identified and steps on how to troubleshoot a website you cannot reach.
+I learned why network troubleshooting matters, how to recognise common network issues, and how to investigate their symptoms.
+
+I also explored a practical process for troubleshooting a website that cannot be reached, including checking connectivity, DNS, local configuration and firewall rules.
 
 ## Your Notes
 
-The reason for troubleshooting is to: esnure smooth operation, identify and fix network problems and minimise downtime. 
+### Why Troubleshoot Networks?
 
-**Common Network Issues:**
-- Connectivity loss (suddenly losing connection), could happen due to hardware failures, cable issues or even problems on your network.
-- Slow network performance
-- IP address conflicts, when two devices on the same network end up with the same IP address. 
-- DNS resolution failures, 
+Network troubleshooting helps to:
 
+- Ensure services operate smoothly
+- Identify and fix network problems
+- Minimise downtime
 
-**Identifying Symptons:**
-- Observe the problem
-- Check physical connections
-- Verify network configuration
-- Test with ping command
+### Common Network Issues
 
+| Issue | Description |
+| :--- | :--- |
+| **Connectivity loss** | A connection stops working, potentially because of hardware failures, cable problems or network faults. |
+| **Slow performance** | Network communication takes longer than expected. |
+| **IP address conflicts** | Two devices on the same network use the same IP address. |
+| **DNS resolution failures** | A domain name cannot be resolved to the required address. |
 
-**Practical Example:**
+### Identifying Symptoms
 
-"I cant reach a website, how can I troubleshoot?"
+- **Observe the problem:** Identify what is failing and whether it affects one device, one website or multiple services.
+- **Check physical connections:** Verify cables, Wi-Fi connectivity and network equipment.
+- **Verify network configuration:** Check the IP address, subnet mask, default gateway and DNS settings.
+- **Test connectivity:** Use `ping`, keeping in mind that some destinations block ICMP.
 
-1) Check network connectivity, ensure your machine has a working internet, try using ping
-2) Do a dig or nslookup to verify that there is no issue with your DNS
-3) Check your host file to make sure there is no overriding entries
-4) Check firewall rules to make sure that a firewall is not blocking any outgoing or incoming traffic
-5) Browser might have issues so try closing it and opening it again
-6) Check your DNS cache, if you have to clear it
-7) Check your system logs, do a traceroute 
+### Practical Example: “I Cannot Reach a Website”
+
+1. **Check network connectivity**
+   - Confirm your device is connected to the network.
+   - Try another website and use `ping` to test connectivity.
+
+2. **Check DNS resolution**
+   - Use `dig` or `nslookup` to see whether the domain resolves successfully.
+   - Check whether the returned address is the expected one.
+
+3. **Check the hosts file**
+   - Look for entries in `/etc/hosts` that could override the domain with an incorrect IP address.
+
+4. **Check firewall rules**
+   - Verify that relevant traffic is permitted, including outgoing connections and their responses.
+
+5. **Check the browser**
+   - Restart the browser or try another browser to see whether the issue is browser-specific.
+
+6. **Check cached DNS information**
+   - If you suspect a stale DNS entry, clear the relevant cache and retry.
+
+7. **Inspect logs and the network path**
+   - Check relevant system logs for errors.
+   - Use `traceroute` to investigate the path towards the destination.
+
+> `dig` and `nslookup` query DNS directly and generally do not check `/etc/hosts`. Successful DNS resolution does not rule out an incorrect hosts-file entry.

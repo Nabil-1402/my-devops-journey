@@ -5,26 +5,76 @@
 ## Key Concepts
 
 - What is routing?
-- Static vs Dynamic routing
-- Common routing protocols
-
+- Static vs dynamic routing
+- Common routing protocols: OSPF and BGP
 
 ## What I Learned
 
-I learned what routing is and why it is important. I also learned the difference between static and dynamic routing and also learned about OSPF and BGP protocols. From my previous knowledge I know that routes can be decided by matching IP cidr blocks which tell you where the next jump is to go to and also what a default gateway is.
+I learned what routing is, why it matters, and the differences between static and dynamic routing. I also explored OSPF and BGP.
+
+This built on my existing knowledge of how destination IP addresses match CIDR blocks in routing tables to determine the next hop, and how default gateways are used.
 
 ## Your Notes
-Routing is the process of determining paths for data to travel across networks. It's importance is that it ensures data reaches its destination efficiently. It is fundemental for internet functionality.
 
-Routers determine the best path by using routing tables to make decisions.
+### What Is Routing?
 
-Static routing is where routes are manually set up by network admins. It is like giving your data a fixed map to follow. It is reliable but does not adapt well if there are changes or issues on the route, if the route changes, you have to update it manually. It is simple to set up but not scalable. 
+**Routing** is the process of determining paths for data to travel across networks. It enables traffic to reach its destination and is fundamental to how the internet works.
 
-Dynamic routing uses algorithms and more complex protocols to automatically find the best path for data. It is more flexible and adapt to network changes. The routes are automatically adjusted. This is much more scalable and adaptable. 
+Routers use **routing tables** to decide where to forward packets next.
 
+> **Memory aid:** Routing = choosing where data goes next.
 
-Routing protocols are essential becuase they automate the process of deterining the best route for datato travel across the network. They also enhance network efficiency. Routing protocols use algorithms to figure out the best paths for data. The importance is that they automate routing updates and improve entwork resilience. 
+### Static vs Dynamic Routing
 
-`OSPF` - stands for Open Shortest Path First. This protocol finds the shortest path for data  to travel. It is used mainly for within large organisations. It uses somethings called **link state information**. It uses this to make routing decisions. Which means it uses the status of the network and the links and the cost to use them. This protocol is known for its fast convergence. That means it can quickly recalculate routes when there are changes in the network. 
+| Feature | Static Routing | Dynamic Routing |
+| :--- | :--- | :--- |
+| **Configuration** | Routes are manually configured by administrators. | Routing protocols automatically learn and update routes. |
+| **Network changes** | Usually requires manual updates. | Adapts automatically when changes are detected. |
+| **Complexity** | Simple for small networks. | More complex to configure and troubleshoot. |
+| **Scalability** | Harder to maintain as the network grows. | Better suited to larger networks. |
 
-`BGP` - stands for Broder Gateway Protocol. It is used to route data between different autonomous systems. Autonomous systems are like large networks managed by single organisations. This protocol uses a path vector mechanis, which means that it maintains the path information that gets updated dynamically as the network topology changes. BGP allows network admins to define routing policies based on various attributes. 
+**Static routing** is like giving traffic a fixed map to follow. It is predictable, but administrators usually need to update routes when the network changes.
+
+**Dynamic routing** uses protocols and algorithms to calculate routes and adjust them as the network changes. This makes it more adaptable and scalable.
+
+> **Memory aid:** Static = set manually. Dynamic = discovers and adapts.
+
+### Why Use Routing Protocols?
+
+Routing protocols exchange network information and calculate routes.
+
+They help:
+
+- Automate routing updates
+- Select paths using metrics or policies
+- Improve resilience by adapting to network changes
+
+### OSPF — Open Shortest Path First
+
+**OSPF** is a routing protocol mainly used **within an organisation's network**.
+
+It uses **link-state information**, including network connections and their costs, to calculate the lowest-cost paths.
+
+OSPF is known for **fast convergence**: it can quickly recalculate routes after network changes.
+
+> **Memory aid:** OSPF = lowest-cost paths inside a network.
+>
+> “Shortest” means lowest total cost, not necessarily the fewest hops.
+
+### BGP — Border Gateway Protocol
+
+**BGP** is used to exchange routing information **between autonomous systems**.
+
+An **autonomous system (AS)** is a collection of networks managed under a common routing policy, such as an internet provider's network.
+
+BGP uses a **path-vector mechanism**, maintaining path information as routes change. Administrators can define routing policies using different path attributes.
+
+> **Memory aid:** BGP = between networks, guided by policies.
+
+### Quick Recap
+
+- **Routing:** Decides where traffic goes next.
+- **Static:** Routes are manually configured.
+- **Dynamic:** Routes adapt using routing protocols.
+- **OSPF:** Uses link states and costs, mainly within a network.
+- **BGP:** Uses path information and policies between autonomous systems.

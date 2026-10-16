@@ -5,105 +5,188 @@
 
 ## Key Concepts
 
-- What is DNS
-- DNS Components
-- DNS Components: Records
-- How Does DNS Work
-- Network Debugging tools
-- /etc/hosts File
+- What DNS is and why it is useful
+- DNS components and record types
+- The DNS hierarchy
+- How DNS resolution works
+- DNS troubleshooting commands
+- The `/etc/hosts` file
 
 ## Commands
 
-`dig ns <name>` - finds the name servers associated with the name you entered. 
+| Command | Purpose |
+| :--- | :--- |
+| `dig <domain>` | Queries a domain's A records by default and displays detailed DNS information. |
+| `dig NS <domain>` | Finds the name servers associated with a domain. |
+| `dig +short NS <domain>` | Displays a concise list of the domain's name servers. |
+| `dig AAAA <domain>` | Queries a domain's IPv6 addresses. |
+| `dig MX <domain>` | Finds the mail servers associated with a domain. |
+| `nslookup <domain>` | Queries DNS and displays information such as a domain's IP addresses. |
+| `traceroute <domain>` | Investigates the network path towards a destination. Some routers may not respond. |
 
-`dig +short ns <name>` - recieve a shorter version which just shows the name servers
+> **Remember:** `dig` and `nslookup` investigate DNS. `traceroute` investigates the network path.
 
-`nslook` - used for query DNS servers. You can find information about DNS records for that certain domain. 
+### Examples
 
-## Examples
-
-dig ns google.com
-
-dig +short ns google.com
-
+```bash
+dig google.com
+dig NS google.com
+dig +short NS google.com
+dig AAAA google.com
+dig MX google.com
 nslookup google.com
+traceroute google.com
+```
 
 ## What I Learned
 
-I learned what a DNS is and how its hierachy is structured. I also learned why having a DNS is useful and how DNS queries are ran and the order in which it takes for a website to be found and loaded by a client. I also learnt some commands that will help me find the exact IP addresses for a domain and also the use of the /etc/hosts file and how to edit it to make looking for domains faster.
+I learned how DNS translates domain names into IP addresses and how its hierarchy connects root servers, TLD servers and authoritative name servers.
+
+I also learned how recursive resolvers find and cache DNS records, how to investigate DNS using `dig` and `nslookup`, and how `/etc/hosts` can override name resolution locally for development and testing.
 
 ## Your Notes
 
-DNS allows us students to keep track of websites and hosts by name instead of an IP address. 
-The DNS translates domain names to IP addresses.
-The role of the DNS in networking is to simplify navigation on the internet, essential for accessing websites and services.
+### What Is DNS?
 
-**DNS Components:**
-- Name servers
-    without them DNS would not work properly. They load DNS settings and configurations, and also respond to your queries from clients or other servers about domain names. 
+The **Domain Name System (DNS)** lets us access websites and services using memorable names instead of numerical IP addresses.
 
-    - Authoritative
-        Hold the actual DNS records. When queried they provide the definitive answers such as the IP address for a domain name. 
+For example, DNS can resolve `www.example.com` to an IP address that a client can connect to.
 
-    - Recursive
-        These servers do not hold the final answer, instead they query the other na,e servers on behalf of the client to find the correct DNS record.  They can also cache the information they retrieve to speed up future queries. 
+> **Remember:** DNS finds the address. Connecting to the server and loading the website happen afterwards.
 
-- Zone Files
-    These are stored inside your name servers and they contain information about the domain. They help name servers answer queries about how to get to a domain if the name server does not know the answer directly. 
+### DNS Components
 
-    They organise your DNS inormation in a readable and managed way, making it easier to handle DNS records. 
+#### Name Servers
 
-- Records
-    A zone file is comprised of multiple resource records. Each record contains specific information about hosts, name servers, and various other resources. Some components of resource records are record names, TTL, Class, Type and Data. The record name being the domain name being queried. TTL being how long the record is valid (before refresh is required), Class being the namespace of the record information, Type being the type of record (A, or MX, or AAAA). Then there is also NS being Name server Record and Data being the actual information corresponding to the record type. Like IP address for an A record. 
+Name servers answer DNS queries. Their role depends on whether they are acting as a **recursive resolver** or an **authoritative name server**.
 
-    - **Types of Records:**
-        - A: Maps a domain name to an IPv4 address
-        - AAAA: Maps a domain name to an IPv6 address
-        - CNAME: Alias of one name to another. It allows you to point to multiple domain names to hsare the same IP address
-        - MX: Specifies the mail server responsible for recieving email for the domain
-        - TXT: Allows domain administrators to instert any text into DNS. Commonly used for verification purposes and to hold SPF (Sender Policy Framework) data. 
+| Type | Role |
+| :--- | :--- |
+| **Recursive resolver** | Finds DNS answers on behalf of clients, querying other servers when needed and caching results. |
+| **Authoritative name server** | Holds DNS records for the zones it serves and provides authoritative answers about those records. |
 
+> A recursive resolver may already have the answer in its cache, allowing it to respond without querying other servers.
 
-DNS resolution is the process of converting domain names into IP addresses. 
+#### DNS Zones and Zone Files
 
-**DNS Hierarchy**
-1) DNS Root,keeps high level information about how to find the top level domains underneath it. 
-2) TLDs (Top Level Domains), these include familiar extensions like .com, .org, .net. Each TLD stores information about domains within the scope.
-3) Authoritative name service, each authoritative name server hosts zones for domains, meaning they have the detailed DNS records for those domains. 
-4) Domain, each domain has a zone and a zone file. This is where all the specific information like IP addresses, mail servers of the domains are stored. 
+A **DNS zone** is a portion of the DNS namespace managed by a particular administrator or organisation.
 
+A **zone file** is a text representation of the records within a zone. DNS providers may also store and manage these records using databases.
 
-**DNS Resolution Process**
-1) As a user you type www.google.com into your browser, which results in your browser sending a request to a DNS resolver that is local to you.
-2) The DNS resolver does a query, it recieves a request and starts looking for the IP address. First it checks it's local cache to see if it knows the IP address. If not, it moves to the next step. The resolver then queries a root server for the IP address. Now the root server does not yet know the IP of the domain but knows where to find the .com top level domain server.
-3) Go to name server for .com TLD
-4) The resolver then queries a .com TLD server. A TLD server does not know the exact IP address of google.com either, but it knows which authoritative name server to ask. 
-5) It goes to the name server
-6) The resolver queries the authoritative name server for google.com, This server has a definitibe IP address. 
-7) Then the IP address is returned to your DNS resolver
-8) The DNS resolver then send sthe IP address back to your browser
+Zones contain information such as:
 
+- IP addresses associated with names
+- Mail servers
+- Authoritative name servers
+- Domain verification records
 
+> A domain and a zone are related, but they are not always identical. A subdomain can be delegated to a separately managed zone.
 
-Domain Registrar is an entity that allows you to purchase and register domains. They have a relationship with the TLD registries for various TLDs. The registrar communicates with the TLD registry to manage domain registrations. 
+#### Resource Records
 
+DNS information is stored as **resource records**.
 
-A DNS hosting provider is an entity that operates DNS name servers that host DNS zones. They allow you to manage these DNS records within these DNS zones. 
+| Field | Meaning |
+| :--- | :--- |
+| **Name** | The name the record applies to, such as `www.example.com`. |
+| **TTL** | Time to Live: how long a DNS answer may be cached before it must be refreshed. |
+| **Class** | The record's protocol class, usually `IN` for Internet. |
+| **Type** | The kind of record, such as `A`, `AAAA` or `MX`. |
+| **Data** | The value stored in the record, such as an IP address or another domain name. |
 
-**DNS Query Process**
-1) First the client, like your computer, wants to visit a website. It starts by checking the local cache and the host file (/etc/hosts) to see if it already knows the IP address. 
-2) If the IP address is not cache locally then the client sends a query to their configured DNS resolver. 
-3) The resolver is like a librarian who knows where to find inormation. Now the DNS resolver checks its own cache. I fit finds the IP address there it returns the result to the client if not it goes to the next step
-4) The resolver first asks the DNS root server for a .com TLD. 
-5) The root server then responds with the address of the .com registry name server. 
-6) The The resolver then asks the websites authoritative name server for the website for the DNS record of the website. 
-7) Returns the website's name server, results are cached
-8) Returns the DNS record for the website to the websites DNS name server
-9) Returns DNS record tp the resolver
+### Common DNS Record Types
 
+| Type | Purpose |
+| :--- | :--- |
+| **A** | Maps a name to an IPv4 address. |
+| **AAAA** | Maps a name to an IPv6 address. |
+| **CNAME** | Makes one name an alias of another name, rather than pointing directly to an IP address. |
+| **MX** | Identifies mail servers responsible for receiving email for a domain, with preference values. |
+| **TXT** | Stores text, commonly used for domain verification and email policies such as SPF. |
+| **NS** | Identifies the authoritative name servers for a zone and supports delegation. |
+| **SOA** | Stores zone administration information, including its serial number and maintenance timers. |
 
-**How to use local host file (/etc/hosts)**
+### The DNS Hierarchy
 
-The /etc/hosts file is a local file on your computer that maps domain names to IP addresses. These files take precedence over DNS for specific entries. 
+DNS uses a hierarchy to help resolvers find the servers responsible for a name.
 
-When you type a domain name into your browser, your computer first checks the /etc/hosts file. If the domain is listed in this file then it uses the provided IP address instead of querying the DNS server. This can be useful for testing, development and even troubleshooting. 
+| Level | Role |
+| :--- | :--- |
+| **Root (`.`)** | Directs resolvers to the name servers for top-level domains. |
+| **Top-level domain (TLD)** | Domains such as `.com`, `.org` and `.net`; their servers provide delegations to authoritative servers for registered domains. |
+| **Domain** | A name such as `example.com`, whose records are served by its authoritative name servers. |
+| **Subdomain or host name** | A name below the domain, such as `www.example.com` or `api.example.com`. |
+
+> Root and TLD servers usually provide referrals to other name servers, rather than the website's final IP address.
+
+### How DNS Resolution Works
+
+Assume you enter `www.example.com` into your browser and no relevant answers are cached:
+
+1. **Local name resolution**
+   - The browser and operating system may check caches and local mappings such as `/etc/hosts`.
+   - The exact order depends on the application and system configuration.
+
+2. **Query the recursive resolver**
+   - The client sends a DNS query to its configured resolver.
+   - The resolver checks its own cache before making further queries.
+
+3. **Query a root server**
+   - The resolver asks about `www.example.com`.
+   - The root server refers it to the `.com` TLD name servers.
+
+4. **Query a `.com` TLD server**
+   - The TLD server refers the resolver to the authoritative name servers for `example.com`.
+
+5. **Query an authoritative name server**
+   - The authoritative server returns the requested record, such as an A or AAAA record.
+   - If it returns a CNAME, the resolver may need to resolve the target name too.
+
+6. **Return and cache the answer**
+   - The resolver returns the answer to the client.
+   - Results can be cached according to their TTLs.
+
+7. **Connect to the destination**
+   - The browser uses the IP address to establish a connection and request the website.
+
+> **Memory aid:** Local checks → Resolver → Root → TLD → Authoritative → Answer → Connection.
+
+### Domain Registrar vs DNS Hosting Provider
+
+| Service | Purpose |
+| :--- | :--- |
+| **Domain registrar** | Lets you register and renew domain names and manages registration details with the relevant registry. |
+| **DNS hosting provider** | Operates authoritative name servers and lets you manage your domain's DNS records. |
+
+The same company can provide both services, but they can also be handled by different providers.
+
+### The `/etc/hosts` File
+
+The `/etc/hosts` file provides **local mappings between IP addresses and host names**.
+
+For applications using the system's name resolution settings, these entries commonly take precedence over DNS. Behaviour can vary depending on system configuration, application behaviour and caching.
+
+#### Example Entry
+
+```text
+192.168.1.50    app.test
+```
+
+This maps `app.test` to `192.168.1.50` on your machine.
+
+#### Common Uses
+
+- **Development:** Point a test name to a local application.
+- **Testing:** Check a new server before updating public DNS.
+- **Troubleshooting:** Test whether an incorrect DNS answer is causing a connection problem.
+
+> Changes to `/etc/hosts` affect your machine only. They do not update public DNS or configure the destination server.
+
+### Troubleshooting Reminders
+
+- **Unexpected DNS answer:** Use `dig` or `nslookup` to inspect the returned records.
+- **Suspected resolver issue:** Query a specific resolver, for example `dig @1.1.1.1 example.com`.
+- **Network path issue:** Use `traceroute`, remembering that missing replies do not necessarily mean traffic is being dropped.
+- **Website works but CSS returns `404`:** Check the stylesheet URL and server configuration; DNS has already resolved the host serving that response.
+
+> **Note:** `dig` and `nslookup` query DNS directly and generally do not use `/etc/hosts`, so their results can differ from applications using system name resolution.

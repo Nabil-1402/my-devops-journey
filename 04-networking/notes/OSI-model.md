@@ -4,117 +4,263 @@
 
 ## Key Concepts
 
-- The 7 layers
-- TCP/IP Model
-- Ports and Protocols
-
+- The seven OSI layers
+- The TCP/IP model
+- Encapsulation and decapsulation
+- Ports and protocols
+- How an HTTPS request travels through a network
 
 ## What I Learned
 
-I learned what the OSI Model is and what happens at each of the 7 layers. I recaped the importance of using ports and protocols as well as the difference between TCP and UDP and when you would prefer to use one over another.
+I learned how the OSI model separates network communication into seven layers, each with a specific responsibility.
+
+I also revisited ports and protocols, compared TCP and UDP, and explored how data travels through the network stack when an application sends a request.
 
 ## Your Notes
 
-The OSI model is used to understand how data travels from one device to another
+### What Is the OSI Model?
 
-We need a communication model because this provides a standard framework that simplifies the way devices and applications communicate over a network. 
+The **Open Systems Interconnection (OSI) model** is a conceptual framework for understanding how devices communicate over a network.
 
-Without a standard model, applications would need to understand the specifics of the underlaying network. With a communication model, applications can work idependently of the network making development and coding much simpler and more efficient. 
+It divides communication into **seven layers**, from physical signals to application-level services.
 
-With a standard communication model, it is easier to upgrade and manage network gear because everything speaks the same language. This standardisation makes maintainence and upgrading smoother and less prone to issues. 
+### Why Use a Layered Model?
 
-An additional benefit is that innovations can happen in each layer independently without affecting the entire system (decoupled innovation).
+- **Clear responsibilities:** Each layer handles a particular part of communication.
+- **Interoperability:** Standard interfaces and protocols help different systems work together.
+- **Simpler development:** Applications can use network services without managing physical transmission.
+- **Easier troubleshooting:** Problems can be investigated by layer.
+- **Independent improvements:** A layer's implementation can change while preserving its interfaces.
 
-**Layer 1 - Application**
-- The top layer is the application layer
-- This is where network services are given directly to applications
-- End to end user layer
-- HTTP, FTP, IRC, SSH, DNS
+> The OSI model is a reference model. Real-world protocols do not always fit neatly into a single layer, especially Layers 5–7.
 
-**Layer 2 - Presentation**
-- This is where data is trabslated to a readable format
-- Encryption is also handled at this layer
-- Syntax user layer
-- SSL, SSH, IMAP, FTP, MPEG, JPEG
+### The Seven Layers
 
-This is somethimes known as the Syntax layer because it ensures data being sent is in a usable or readable format. This layer also handles encryption to handle data security.
+| Layer | Name | Main Responsibility | Examples |
+| :--- | :--- | :--- | :--- |
+| **7** | Application | Provides network services used by applications. | HTTP, DNS, SMTP, SSH |
+| **6** | Presentation | Handles data representation, encoding, compression and encryption concepts. | Character encoding, JSON representation, JPEG |
+| **5** | Session | Establishes, manages and ends communication sessions. | Dialogue control, checkpoints and session coordination |
+| **4** | Transport | Provides communication between application endpoints. | TCP, UDP, ports |
+| **3** | Network | Handles logical addressing and routing between networks. | IP, ICMP, routers |
+| **2** | Data Link | Transfers frames across a local link. | MAC addresses, Ethernet frames, switches |
+| **1** | Physical | Transmits bits as signals through a medium. | Copper, fibre, radio, hubs, repeaters |
 
+> **Numbering matters:** Layer 1 is Physical; Layer 7 is Application.
 
-**Layer 3 - Session**
-- Can manage sessions between different applications
-- Synch and send to port
-- API's, Sockets, Winsock
+### Layer 7 — Application
 
-This layer is responsible for three things, establishing, managing and terminating sessions. By establishing sessions that means getting a session started and maintaining a session means keeping the session alive, ensuring that any conversation and every request can continue smoothly. Some example components of this layer are session management protocols like RPC, NetBIOS. 
+The **Application layer** provides network protocols and services used by software.
 
+Examples include:
 
-**Layer 4 - Transport**
-- End to end communication and data integrity is managed
-- TCP, UDP
+- **HTTP:** Web requests and responses
+- **DNS:** Name resolution and other DNS lookups
+- **SMTP:** Email transfer
+- **SSH:** Secure remote access
+- **FTP:** File transfer
 
-This layer is responsible providing reliable data transfer services to the lower layers. It used to ensure that data packets arrive safely and in the right sequence. The two components that allow it to do this job are TCP and UDP. TCP provides reliable, ordered and error free data. UDP is much faster but less reliable. 
+> The application itself, such as a browser, uses Application-layer protocols to communicate.
 
-**Layer 5 - Network**
-- Where routing data packets are managed
-- IP, ICMP, IPSec, IGMP
+### Layer 6 — Presentation
 
-This layer is responsible to determine how data is sent to a recipient. Ontop of that, it manages packet forwarding, including routing through different routers. It decides the best path for data to travel across different networks, ensuring that it gets to the right place. Some of the compents of this are IP addresses and routers. In this layer data is organised into packets which are things that carry data from one device to another. The IP addresses handle where packets go to and the routers are the component that allows it to do this job. 
+The **Presentation layer** concerns how data is represented so the receiving application can interpret it.
 
+Its responsibilities can include:
 
-**Layer 6 - Data Link**
-- Node to node transfer and error detection is managed
-- Frames
-- Ethernet, PPP, Switch, Bridge
+- **Encoding:** Representing text using formats such as UTF-8
+- **Serialisation:** Converting structured data into a transferable representation
+- **Compression:** Reducing data size
+- **Encryption and decryption:** Protecting data confidentiality
 
-As mentioned above, this layer is responsible for node to node data transfer. This means ensuring data packets are sent and recieved correctly between different network nodes. It is all about maintaining a reliable link between all devices. This layer puts your data packets into frames where it's actually organised. Frames are like the envelopes that carry the data and endure it gets to the right place. Some of the components that do the job here are Mac addresses, switches and bridges.
+Examples of data formats include **JSON, JPEG and MPEG**.
 
+> TLS provides encryption in real networks, but its position does not map perfectly to a single OSI layer. SSH, FTP and IMAP are normally classified as Application-layer protocols.
 
-**Layer 7 - Physical**
-- Physical connection between devices
-- Coax, Fibre, Wireless, Hubs, Repeaters
+### Layer 5 — Session
 
-The layer transmits raw bit streams over a physical medium. This deals with the hardware connection. Some of the components of this layer includes: cables, switches and network interface cards. There is no device addressing here meaning all data is processed by all devices. This is also the limitation.
+The **Session layer** concerns establishing, coordinating and ending dialogues between applications.
 
+Its responsibilities can include:
 
-**TCP/IP Model**
-This is made of 4 layers:
-1) Application Layer
+- Starting and ending sessions
+- Coordinating ongoing communication
+- Managing checkpoints that allow an exchange to resume
 
-    This is where network applications and their products operate like HTTP, TLS, and DNS.  
+In modern internet applications, many of these functions are handled by application protocols and libraries.
 
-2) Transport Layer
+> A TCP connection belongs to Layer 4. A website login session is usually managed at the application level. Neither maps directly to the OSI Session layer.
 
-    This layer is where end to end communication and data trasfer happen between devices. The key protocols here are TCP and UPD.
+### Layer 4 — Transport
 
-3) Internet Layer
+The **Transport layer** provides communication between application endpoints, using **ports** to distinguish them.
 
-    This layer is responsible for logical addressing and routing data across different networks. IP is the primary protocol. 
+The two main protocols are **TCP** and **UDP**.
 
-4) Network Access Layer
+| Feature | TCP | UDP |
+| :--- | :--- | :--- |
+| **Connection setup** | Establishes a connection using a handshake. | No transport connection setup. |
+| **Delivery** | Uses acknowledgements and retransmissions. | No built-in delivery guarantee. |
+| **Ordering** | Presents data to the application in order. | No built-in ordering guarantee. |
+| **Data format** | A stream of bytes. | Individual datagrams. |
+| **Typical uses** | SSH, email, HTTP/1.1 and HTTP/2 | DNS queries, real-time media, QUIC |
 
-    This layer encompasses the data link and physical layer of the OSI model.
+The TCP three-way handshake is:
 
+1. **SYN**
+2. **SYN-ACK**
+3. **ACK**
 
-**Example Flow of POST Request (For Sender):**
+> TCP supports reliable delivery, but connections can still fail. UDP has lower transport overhead; it is not automatically faster in every situation.
 
-1) Starting at application layer, the POST request with JSON data is sent to the HTTPS server. 
+### Layer 3 — Network
 
-2) In presentation layer, you JSON needs to be serialised (converting data to flate byte data strings)
+The **Network layer** handles logical addressing and forwarding packets between networks.
 
-3) In session layer, you request to establish TCP connection/TLS
+Its responsibilities include:
 
-4) In transport layer, you send SYN request to target port 443 which is HTTPS
+- Adding source and destination **IP addresses**
+- Routing packets towards their destination
+- Selecting a next hop using a routing table
 
-5) In network layer, SYN in an IP packet(S) and adds the source/destination IP
+Examples include:
 
-6) In data link layer, each packet goes into a single frame and adds the source/destination MAC addresses 
+- **IPv4 and IPv6**
+- **ICMP**
+- **Routers**
 
-7) Finally in physical layer, each frame becomes a string of bits which is converted into either radio signal (wifi), electrical signal (ethernet), or light (fibre)
+> Routers select routes according to their routing tables and policies. The chosen route is not necessarily the geographically shortest or fastest path.
 
+### Layer 2 — Data Link
 
+The **Data Link layer** transfers data across a local network link using **frames**.
 
+Its responsibilities include:
 
+- Encapsulating network-layer packets into frames
+- Using link-layer addresses, such as **MAC addresses**
+- Controlling access to the transmission medium
+- Detecting frame corruption
 
-Ports are logical endpoints for communication. When your device wants to send or recieve data, it uses these ports to make sure that data goes to the right place. 
+Examples include:
 
-Protocols are rules governing data transmission. The importance of ports and protocls is that they facilitate communication between devices. 
+- **Ethernet framing**
+- **Wi-Fi framing**
+- **PPP**
+- **Layer 2 switches and bridges**
+
+> Error detection does not always mean error correction or retransmission. Ethernet can detect and discard corrupted frames; higher layers may handle recovery.
+
+### Layer 1 — Physical
+
+The **Physical layer** transmits bits as signals through a physical medium.
+
+Examples include:
+
+- **Electrical signals** over copper
+- **Light pulses** through fibre
+- **Radio signals** over wireless links
+- **Connectors, hubs and repeaters**
+
+This layer defines characteristics such as signalling, timing and transmission rates. It does not interpret IP or MAC addresses.
+
+> Ethernet and Wi-Fi include both Physical-layer and Data Link-layer specifications. A network interface card therefore performs functions across more than one layer.
+
+### Remembering the Layers
+
+From **Layer 7 down to Layer 1**:
+
+**All People Seem To Need Data Processing**
+
+| Word | Layer |
+| :--- | :--- |
+| **All** | Application |
+| **People** | Presentation |
+| **Seem** | Session |
+| **To** | Transport |
+| **Need** | Network |
+| **Data** | Data Link |
+| **Processing** | Physical |
+
+### Encapsulation and Decapsulation
+
+As data moves down the sender's network stack, each layer adds the information needed for delivery. This is called **encapsulation**.
+
+| Stage | Common Name |
+| :--- | :--- |
+| **Application data** | Data or message |
+| **TCP transport** | Segment |
+| **UDP transport** | Datagram |
+| **IP network** | Packet |
+| **Data Link** | Frame |
+| **Physical** | Bits transmitted as signals |
+
+At the receiver, the stack interprets and removes the relevant headers as data moves upwards. This is called **decapsulation**.
+
+> **Memory aid:** Data → Segment/Datagram → Packet → Frame → Signals.
+
+### The TCP/IP Model
+
+The **TCP/IP model** describes the internet protocol suite using four layers.
+
+| TCP/IP Layer | Approximate OSI Equivalent | Examples |
+| :--- | :--- | :--- |
+| **Application** | Layers 7, 6 and 5 | HTTP, DNS, SMTP, application data formats |
+| **Transport** | Layer 4 | TCP, UDP |
+| **Internet** | Layer 3 | IP, ICMP |
+| **Network Access / Link** | Layers 2 and 1 | Ethernet, Wi-Fi, physical transmission |
+
+> The mapping is approximate. Internet applications commonly combine responsibilities that the OSI model separates.
+
+### Example: Sending an HTTPS POST Request
+
+This example assumes **HTTPS over TCP**, such as HTTP/1.1 or HTTP/2, with a new connection.
+
+1. **Resolve the server's address**
+   - The client obtains an IP address using local configuration, cached information or DNS.
+
+2. **Establish a TCP connection**
+   - The client connects to the server, typically on port **443**.
+   - TCP uses the **SYN → SYN-ACK → ACK** handshake.
+
+3. **Establish TLS**
+   - The client and server negotiate a secure connection.
+   - The client normally validates the server's certificate.
+
+4. **Prepare the HTTP request**
+   - The application serialises its data, for example as JSON.
+   - It creates a POST request containing headers and the request body.
+
+5. **Encrypt and transport the request**
+   - TLS encrypts the HTTP data.
+   - TCP carries the encrypted bytes, dividing the stream into segments as needed.
+
+6. **Add IP addressing**
+   - IP packets carry the transport data with source and destination IP addresses.
+
+7. **Send over the local link**
+   - Packets are carried inside frames.
+   - On Ethernet or Wi-Fi, the destination MAC normally belongs to the next hop, such as the default gateway.
+
+8. **Transmit physical signals**
+   - The interface sends bits using electrical, radio or optical signals.
+
+9. **Process the request at the destination**
+   - The server's network stack processes the incoming data.
+   - TLS decrypts it, and the application handles the HTTP request.
+
+> These are conceptual stages, not a separate operation for every OSI layer. Existing connections can be reused, and HTTP/3 uses QUIC over UDP instead of TCP.
+
+### Ports and Protocols
+
+**Ports** identify transport endpoints, helping the operating system deliver traffic to the appropriate application.
+
+**Protocols** define the rules and message formats used for communication.
+
+| Item | Example |
+| :--- | :--- |
+| **IP address** | Identifies the destination interface, such as `192.168.1.10`. |
+| **Port** | Identifies a transport endpoint, such as TCP port `443`. |
+| **Protocol** | Defines communication rules, such as HTTP, TCP or IP. |
+
+> **Remember:** IP identifies where traffic is going; ports help identify the application endpoint; protocols define how communication works.
