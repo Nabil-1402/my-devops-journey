@@ -4,19 +4,27 @@
 
 ## Key Concepts
 
-- 
-- Point 2
+- Types of docker networks
+- Uses of docker networks
+- Importance of docker networks
 
 ## Commands
 
-`command` - what it does
+`docker network ls` - list all docker networks
+
+`docker network create <network name>` - create a custom docker network
 
 ## Examples
 
-(code examples)
+```
+docker network create my-custom-network
+
+docker network ls
+```
 
 ## What I Learned
 
+I learned what docker networks are and what they are used for. I went over the three types: bridge, host and none. I also learned how to link two containers using a network in lab2.
 
 ## Your Notes
 
