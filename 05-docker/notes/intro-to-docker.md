@@ -9,10 +9,11 @@
 - What is Docker
 - Images
 - VMs vs Container
+- Docker Files
 
 ## What I Learned
 
-I learned what docker is and it's components. I learned what conatiners and images are and what makes containers different to VMs. I learned how the set up of a VM is different to containers and the pros and cos of each of them and when you might want to use one over the other.
+I learned what docker is and it's components. I learned what conatiners and images are and what makes containers different to VMs. I learned how the set up of a VM is different to containers and the pros and cos of each of them and when you might want to use one over the other. Additionally I learned the basics of what a dockerfile contains and how they are used to create an image.
 
 ## Your Notes
 
@@ -86,3 +87,29 @@ Because each container does not need a full guest OS, containers are generally s
 | **Portability** | Usually smaller and easier to distribute; require compatible OS and CPU architecture. | Usually larger; may require compatible hypervisors or image conversion. |
 
 > **Remember:** A VM virtualises a machine; a container isolates an application.
+
+### Dockerfile
+
+A dockerfile is a series of instructions which say how to build the docker image. Each instruction in a docker file creates a layer in the docker image which makes it easy to track changes and optimize your builds. 
+
+#### 5 Key Commands
+
+| Command | Description |
+| :--- | :--- |
+| `FROM` | Specifies the base image to use for the Docker image |
+| `RUN` | Executes commands in the container (used to install packages) |
+| `COPY` | copies files from the host machine into the container |
+| `WORKDIR` | Sets the wokring directory for subsequent instructions |
+| `CMD` | Specifies the command to run when the container starts |
+
+#### Example
+
+```dockerfile
+FROM node:14
+WOKRDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 3000
+CMD ["node", "index.js"]
+```
