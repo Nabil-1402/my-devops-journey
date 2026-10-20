@@ -1,0 +1,13 @@
+
+services: #List all of the different parts of our app 
+  web:
+    build: . #Tells docker compose to build the web service from the docker file in the current directory
+    ports:
+      - "5002:5002"
+    depends_on: #Says to start the service in depends on first before this one
+      - mydb
+
+  mydb:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: my-secret-pw
