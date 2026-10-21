@@ -1,7 +1,7 @@
 
 services: #List all of the different parts of our app 
   web:
-    build: . #Tells docker compose to build the web service from the docker file in the current directory
+    image: 40032438341.dkr.ecr.eu-west-2.amazonaws.com/flask-mysql:latest #ECR repository 
     ports:
       - "5002:5002"
     depends_on: #Says to start the service in depends on first before this one
