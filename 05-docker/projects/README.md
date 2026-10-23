@@ -110,7 +110,7 @@ Docker Compose creates a shared network, allowing Flask to connect to Redis usin
 To build and start the application, I ran:
 
 ```bash
-docker compose up --build
+docker-compose up 
 ```
 
 ### Step 4: Test the Application
