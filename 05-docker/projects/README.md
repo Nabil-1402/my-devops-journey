@@ -119,10 +119,10 @@ docker compose up --build
 
 I visited `http://localhost:5001/` and confirmed that the welcome message appeared.
 
-![Flask welcome page](05-docker/projects/container-challenge/screenshots/welcome-page.png)
+![Flask welcome page](container-challenge/screenshots/welcome-page.png)
 
 #### Visit Counter
 
 I visited `http://localhost:5001/count` and refreshed the page to confirm that the visit count increased with each request.
 
-![Flask visit count stored in Redis](05-docker/projects/container-challenge/screenshots/count-page.png)
+![Flask visit count stored in Redis](container-challenge/screenshots/count-page.png)
