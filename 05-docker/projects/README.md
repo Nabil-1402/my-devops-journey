@@ -126,3 +126,143 @@ I visited `http://localhost:5001/` and confirmed that the welcome message appear
 I visited `http://localhost:5001/count` and refreshed the page to confirm that the visit count increased with each request.
 
 ![Flask visit count stored in Redis](container-challenge/screenshots/count-page.png)
+
+## Bonus Tasks
+
+### Persistent Storage
+
+To include persistent storage in my application, I made use of Docker volumes.
+
+I did this by updating the `Docker-compose.yml` file, adding the `volumes:` key within the Redis service and then defining the volume the application uses outside the `services` section.
+
+```yaml
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Flask/Dockerfile
+    ports:
+      - "5001:5001"
+    depends_on:
+      - redis
+
+  redis:
+    build: ./Redis
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
+```
+
+Here you can see that, within the Redis service, the left side of the colon is the name of the volume I am creating, and the right side is the directory inside the container where the volume is mounted and Redis stores its data.
+
+### Environment Variables
+
+To make the application more flexible, I made use of environment variables. I first edited the `app.py` file to import the `os` library so that the application can read environment variables available to it. Then I created variables that read those values and use defaults if the environment variables are not set.
+
+```python
+import os
+
+app = Flask(__name__)
+redis_host = os.getenv('REDIS_HOST', 'redis')
+redis_port = int(os.getenv('REDIS_PORT', 6379))
+redis = Redis(host=redis_host, port=redis_port)
+```
+
+Then I edited the `Docker-compose.yml` file to provide these environment variables to the application. I did this by using the `environment:` key and putting the two environment variables under it. This falls under the `web` service.
+
+```yaml
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Flask/Dockerfile
+    ports:
+      - "5001:5001"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+  redis:
+    build: ./Redis
+    volumes:
+      - redis-data:/data
+
+volumes:
+  redis-data:
+```
+
+The values defined in the Compose file are passed to the `web` container. The defaults in `app.py` are used if those variables are not set.
+
+### Scaling the Application
+
+To scale the Flask service to run multiple instances and load balance between them using Docker Compose, I used Nginx. Nginx is a reverse proxy that can also perform load balancing.
+
+A load balancer directs traffic to different instances of the same application based on an algorithm, such as round robin. Some load balancers can also check the health of instances and direct traffic only to healthy ones.
+
+I incorporated Nginx by first changing the `ports:` key under the `web` service in the `Docker-compose.yml` file to `expose:`. This documents the port used by the web service without publishing it directly to the host, avoiding a host-port conflict when running multiple instances.
+
+Then I added a service called `nginx`, which has its own image, a published port and a configuration file mounted as a volume. It also depends on the `web` service, so Compose starts the web service before starting Nginx.
+
+I then created an `nginx.conf` file. This is the configuration file for Nginx.
+
+```nginx
+events {}
+
+http {
+    upstream flask_app {
+        server web:5001;
+    }
+
+    server {
+        listen 5001;
+
+        location / {
+            proxy_pass http://flask_app;
+        }
+    }
+}
+```
+
+```yaml
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Flask/Dockerfile
+    expose:
+      - "5001"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+  redis:
+    build: ./Redis
+    volumes:
+      - redis-data:/data
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - web
+
+volumes:
+  redis-data:
+```
+
+To start three instances of the web service, I can use:
+
+```bash
+docker-compose up --build --scale web=3
+```
+
+Nginx can distribute requests across the web containers resolved when it starts. If the number of containers changes later, Nginx may need to be restarted to pick up the updated addresses.
