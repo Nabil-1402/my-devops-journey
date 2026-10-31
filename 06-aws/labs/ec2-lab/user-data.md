@@ -36,7 +36,7 @@ Hello CoderCo from ip-172-31-23-169.eu-west-2.compute.internal
 
 This matches the output specified in the User Data script.
 
-![Web server output](screenshots/Screenshot 2026-10-31 at 10.33.50.png)
+![EC2 web server output](<screenshots/Screenshot 2026-10-31 at 10.33.50.png>)
 
 ## What I Learned
 
