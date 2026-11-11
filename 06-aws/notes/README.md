@@ -1,13 +1,6 @@
 # Notes
 
-Add your notes here as you progress through this module.
-
-## Template
-
-When creating a new note, you can use this structure:
-
-```markdown
-# Topic Name
+# Storage
 
 ## Key Concepts
 
@@ -24,10 +17,8 @@ When creating a new note, you can use this structure:
 
 ## What I Learned
 
-(your own summary)
-```
+
 
 ## Your Notes
 
-- [ ] Add your first note
 
