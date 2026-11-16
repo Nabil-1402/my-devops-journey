@@ -172,3 +172,35 @@ Things you need to know:
 - You can add an optional list of certs to support multiple domains
 - Clients can use SNI (Server Name Indication) to specify the hostname they reach
 - Ablility to specify a security policy to support older versions of TLS/SSL
+
+#### SSL - Server Name Indication (SNI)
+SNI solves the problem of loading multiple SSL certificates onto one web server (to serve multiple websites.)
+It's a newer protocol, and requires the client to indicate the hostname of the target server in the initial SSL handshake.The server will then find the correct certificate, or return the default one.
+
+Only works for ALB & NLB (newer generation), CloudFront. Does not work for CLB (older gen). 
+
+
+#### Elastic Load Balancers - SSL
+Classic Load Balancer (v1)
+- Support only one SSL certificate
+- Must use multiple CLB for multiple hostname with multiple SSL certificates.
+
+Application Load Balancer (v2)
+- Supports multiple listener with multiple SSL certificates
+- Uses server name indication (SNI) to make it work
+
+Network Load Balancer (v2)
+- Supports multiple listeners with multiple SSL certificates.
+- Uses server name indication (SNI) to make it work.
+
+### Connection Draining
+In AWS this is also known as `deregistration delay`
+
+Feature Naming
+- Connection Draining - for CLB
+- Deregistration Delay - for ALB & NLB
+
+When you are deregistrating an instance (getting rid of it) in the ALB, maybe because it is unhealthy or you are scaling down, you do not want to cut off any ongoing connections instantly. 
+
+So what happens is, inflight requests to the instance are allowed to complete. The load balancer stops sending new requests to that instance but it waits for the active request to finish up. You can control how long this process takes. 
+
