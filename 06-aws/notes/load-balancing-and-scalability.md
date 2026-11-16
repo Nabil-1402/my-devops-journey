@@ -137,3 +137,38 @@ Key benefits:
 The NLB works with raw TCP traffic and forwards this with rules that you defined such as certain ports or protocols. It routes this traffic to different target groups, each handling a different type of application. Eventhough the NLB works at the TCP level it can still handle HTTP as a protocol within the TCP transport layer. However it does not inspect HTTP headers of even handle SSL termination which is different from what you would see within ALB. This makes NLBs great for scenarios where you need raw network performance such as real time applications like gaming servers, streaming services application and so on. Any traffic that depends heavily on latency and connection speed will benefit from being routed via an NLB. 
 
 This setup is especially useful to handle different applciations that depend on different protocols. The user applciation in this case might need to handle pure TCP traffic, while their search application may work with HTTP. 
+
+### Sticky Sessions (Session Affinity)
+Sticky sessions ensure that a client is always routed to the same instance behind the load balancer. It works across load balancers.
+
+Behind the scenes the load balancer uses "cookies" to keep track which instance the client is connected to. You can control how long the cookie and stickiness lasts by setting up an expiration date. This cookie is what binds a user to a certain server. 
+
+A typical use case is when your application stores seesion data that is not shared across instances. For example, if a user is interacting with an e-commerce site and the cart data is only specific to one instance you would want them to stick to that instance so that they do not lose that session. By keeping the user on that instance, you avoid situations where they might lose their cart or session information. 
+
+Trade offs include:
+- when stickiness is enabled you an potentially overload one server if too many clients are stuck to it, leading to imbalanced traffic distribution
+- Usesful for session heavy apps but impacts the app's performance
+
+
+### SSL / TLS (Basics)
+SSL and TLS certificates are crucial when dealing with security over the internet. 
+
+#### SSL
+Stands for `Secure Socket Layer`. SSL certificates ensure that traffic between your clients and your load balancer to be encrypted in transit. Often called inflight encryption. 
+
+#### TLS 
+Stands for `Transport Layer Security`. It is the more modern version of SSL. These certificates are issued by Certificate Authorities (CAs). They are trustued 3rd parties that verify the identity of a website and some common CAs are:
+Comodo, Symantec, GoDaddy, Globalsign, Digicert, Letsencrypt. 
+
+Certificates have an expiration date. When you set them up you get to choose how long they last. After that time frame they need to be renewed. If they are expired then when clients visit a website they do get a big warning letting them know. 
+
+#### Load Balancer - SSL Certificate
+The load balancer is the middle man making sure that traffic between your clients and instances are encrypted. This is done by using a X.905 certificate (an SSL/TLS certificate). 
+
+AWS makes it easy to manage certificates by providing a service called AWS Certificate Manager (ACM). Here you can create, renew and manage certificates. When you are setting up a HTTPS listener on your load balancer, this is how we ensure that traffic is encrypted. 
+
+Things you need to know:
+- Specifiy a default certificate. This is what is used when no other rules are matched. 
+- You can add an optional list of certs to support multiple domains
+- Clients can use SNI (Server Name Indication) to specify the hostname they reach
+- Ablility to specify a security policy to support older versions of TLS/SSL
